@@ -8,11 +8,11 @@ import os
 TIMEOUT = 20  # seconds
 
 # Define the fixed text for the initial configuration
-fixed_text = """#profile-title: base64:8J+GkyBHaXRodWIgfCBCYXJyeS1mYXIg8J+ltw==
+fixed_text = """#profile-title: base64:8J+GkyBBU1RSQUNBVDIwMjIgfCBhcGlWMnJheSA8PuKajA==
 #profile-update-interval: 1
 #subscription-userinfo: upload=29; download=12; total=10737418240000000; expire=2546249531
-#support-url: https://github.com/barry-far/V2ray-Configs
-#profile-web-page-url: https://github.com/barry-far/V2ray-Configs
+#support-url: https://github.com/ASTRACAT2022/apiV2ray
+#profile-web-page-url: https://github.com/ASTRACAT2022/apiV2ray
 """
 
 # Base64 decoding function
@@ -32,36 +32,42 @@ def decode_links(links):
     for link in links:
         try:
             response = requests.get(link, timeout=TIMEOUT)
+            response.raise_for_status()
             encoded_bytes = response.content
             decoded_text = decode_base64(encoded_bytes)
-            decoded_data.append(decoded_text)
-        except requests.RequestException:
-            pass  # If the request fails or times out, skip it
+            if decoded_text:
+                decoded_data.append(decoded_text)
+        except requests.RequestException as e:
+            print(f"Failed to fetch {link}: {e}")
     return decoded_data
 
 # Function to decode directory links with a timeout
 def decode_dir_links(dir_links):
     decoded_dir_links = []
-    for link in dir_links:
+    for link in links:
         try:
             response = requests.get(link, timeout=TIMEOUT)
+            response.raise_for_status()
             decoded_text = response.text
-            decoded_dir_links.append(decoded_text)
-        except requests.RequestException:
-            pass  # If the request fails or times out, skip it
+            if decoded_text:
+                decoded_dir_links.append(decoded_text)
+        except requests.RequestException as e:
+            print(f"Failed to fetch {link}: {e}")
     return decoded_dir_links
 
 # Filter function to select lines based on specified protocols
 def filter_for_protocols(data, protocols):
     filtered_data = []
-    for line in data:
-        if any(protocol in line for protocol in protocols):
-            filtered_data.append(line)
+    for item in data:
+        lines = item.splitlines()
+        for line in lines:
+            if any(protocol in line for protocol in protocols):
+                filtered_data.append(line)
     return filtered_data
 
 # Create necessary directories if they don't exist
 def ensure_directories_exist():
-    output_folder = os.path.abspath(os.path.join(os.getcwd(), ".."))
+    output_folder = os.path.abspath("./output")
     base64_folder = os.path.join(output_folder, "Base64")
 
     if not os.path.exists(output_folder):
@@ -73,38 +79,27 @@ def ensure_directories_exist():
 
 # Main function to process links and write output files
 def main():
-    output_folder, base64_folder = ensure_directories_exist()  # Ensure directories are created
+    output_folder, base64_folder = ensure_directories_exist()
 
     protocols = ["vmess", "vless", "trojan", "ss", "ssr", "hy2", "tuic", "warp://"]
     links = [
+        "https://raw.githubusercontent.com/barry-far/V2ray-Configs/main/All_Configs_Sub.txt",
         "https://raw.githubusercontent.com/yebekhe/TVC/main/subscriptions/xray/base64/mix",
         "https://raw.githubusercontent.com/ALIILAPRO/v2rayNG-Config/main/sub.txt",
         "https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray",
-        "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/protocols/reality",
-        "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/protocols/vless",
-        "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/protocols/vmess",
-        "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/protocols/trojan",
-        "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/protocols/shadowsocks",
-        "https://raw.githubusercontent.com/ts-sf/fly/main/v2",
         "https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2",
-        "https://mrpooya.top/SuperApi/BE.php",
-        "https://raw.githubusercontent.com/MrPooyaX/VpnsFucking/main/BeVpn.txt"
     ]
     dir_links = [
-        "https://raw.githubusercontent.com/IranianCypherpunks/sub/main/config",
-        "https://raw.githubusercontent.com/sashalsk/V2Ray/main/V2Config",
-        "https://raw.githubusercontent.com/mahdibland/ShadowsocksAggregator/master/Eternity.txt",
         "https://raw.githubusercontent.com/itsyebekhe/HiN-VPN/main/subscription/normal/mix",
         "https://raw.githubusercontent.com/sarinaesmailzadeh/V2Hub/main/merged",
         "https://raw.githubusercontent.com/freev2rayconfig/V2RAY_SUBSCRIPTION_LINK/main/v2rayconfigs.txt",
         "https://raw.githubusercontent.com/Everyday-VPN/Everyday-VPN/main/subscription/main.txt",
-        "https://raw.githubusercontent.com/C4ssif3r/V2ray-sub/main/all.txt",
     ]
 
     decoded_links = decode_links(links)
     decoded_dir_links = decode_dir_links(dir_links)
 
-    combined_data = decoded_links + decoded_dir_links
+    combined_data = decoded_links + decoded_dir_links  # Combine all decoded data
     merged_configs = filter_for_protocols(combined_data, protocols)
 
     # Clean existing output files
@@ -139,13 +134,13 @@ def main():
     num_files = (num_lines + max_lines_per_file - 1) // max_lines_per_file
 
     for i in range(num_files):
-        profile_title = f"🆓 Git:Barry-far | Sub{i+1} 🫂"
+        profile_title = f"🆓 Git:ASTRACAT2022 | Sub{i+1} 🫂"
         encoded_title = base64.b64encode(profile_title.encode()).decode()
         custom_fixed_text = f"""#profile-title: base64:{encoded_title}
 #profile-update-interval: 1
 #subscription-userinfo: upload=29; download=12; total=10737418240000000; expire=2546249531
-#support-url: https://github.com/barry-far/V2ray-Configs
-#profile-web-page-url: https://github.com/barry-far/V2ray-Configs
+#support-url: https://github.com/ASTRACAT2022/apiV2ray
+#profile-web-page-url: https://github.com/ASTRACAT2022/apiV2ray
 """
 
         input_filename = os.path.join(output_folder, f"Sub{i + 1}.txt")
