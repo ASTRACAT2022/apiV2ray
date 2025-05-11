@@ -44,7 +44,7 @@ def decode_links(links):
 # Function to decode directory links with a timeout
 def decode_dir_links(dir_links):
     decoded_dir_links = []
-    for link in links:
+    for link in dir_links:
         try:
             response = requests.get(link, timeout=TIMEOUT)
             response.raise_for_status()
@@ -99,7 +99,7 @@ def main():
     decoded_links = decode_links(links)
     decoded_dir_links = decode_dir_links(dir_links)
 
-    combined_data = decoded_links + decoded_dir_links  # Combine all decoded data
+    combined_data = decoded_links + decoded_dir_links
     merged_configs = filter_for_protocols(combined_data, protocols)
 
     # Clean existing output files
